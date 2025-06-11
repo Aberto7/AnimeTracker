@@ -3,6 +3,20 @@ const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../middleware/authMiddleware');
 
+// GET all entries bookmarked by the current user
+router.get('/mylist', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const entries = await Entry.find({ user: userId }).sort({ createdAt: -1 });
+
+    res.status(200).json(entries);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Failed to retrieve user entries' });
+  }
+});
+
 
 const {
   getEntries,
